@@ -1,5 +1,5 @@
 <%@page import="org.omg.CORBA.Request"%>
-<%@ page import="com.scdq.manager.model.User" %>
+<%@ page import="com.scdq.manager.sys.model.User" %>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -28,13 +28,31 @@
 		height: 600px;
 	}
 
-	.tab-content {
-		width:100%;
-		height:550px;
+	#menu-content {
+		width: 100%;
 	}
 
+    #menus-1 {
+        width: 80px;
+        height: 200px;
+        overflow: hidden;
+        position: absolute;
+        background-color: white;
+        left: 5px;
+        border: 1px orange solid;
+        border-radius: 5px;
+        box-shadow: 0 0 10px;
+    }
+
+    #menus-1 .tab {
+        margin: 0;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+    }
+
     #menus-2 {
-        height: 540px;
+        /*height: 540px;*/
         display: none;
         margin-top: 10px;
     }
@@ -43,38 +61,9 @@
         display: block;
     }
 
-    #menus-2.show+.tab-content {
-        width: 668px;
-        margin-left: 10px;
-    }
 	</style>
 	<script type="text/javascript" src="res/js/my-ui.js"></script>
 	<script type="text/javascript">
-	var menus = [{
-		"id": "goods",
-		"title": "商品信息",
-		"url": "home/goods"
-	}, {
-		"id": "todo",
-		"title": "备忘录",
-        "sub": [{
-            "id": "normalTodo",
-            "title": "普通待办",
-            "url": "home/todo"
-        }]
-	}, {
-		"id": "dictionary",
-		"title": "数据字典",
-		"url": "home/dictionary"
-	}, {
-		"id": "settings",
-		"title": "设置",
-		"sub": [{
-			"id": "modifyPassword",
-			"title": "修改密码",
-			"url": "home/settings/modifyPassword"
-		}]
-	}];
 
 	function logout() {
 		$.ajax({
@@ -90,20 +79,38 @@
 		});
 	}
 
+    function adjustLayout() {
+        var $doc = $(document);
+        var $dom = $("#menus-1");
+        $dom.css("top", ($doc.height() - $dom.height()) / 2 + "px");
+
+        var $center = $(".center");
+        var $menu2 = $("#menus-2");
+        var $menuContent = $("#menu-content");
+        $menuContent.height($center.height() - $menu2.height());
+    }
+
 	$(document).ready(function() {
+        adjustLayout();
+        console.log($(document).height());
         $("#menus-2").myTab({
-            tabBar: "#menus-2",
-            tabContent: "#menu-content"
+            "tabBar": "#menus-2",
+            "tabContent": "#menu-content",
+            "titleField": "name",
+            "tabLocation": "top"
         });
 		$("#menus-1").myTab({
-            tabBar: "#menus-1",
-            tabContent: "#menu-content",
-			data: menus,
-			tabLocation: "top",
-            onTabClick: function(menu) {
-                if (menu.sub) {
+            "tabBar": "#menus-1",
+            "tabContent": "#menu-content",
+			"url": "sys/getMenus",
+            "requestSuccess": function(data) {
+                this.load(data.data);
+            },
+            "titleField": "name",
+            "onTabClick": function(menu) {
+                if (menu.subMenus) {
                     $("#menus-2").addClass("show");
-                    $("#menus-2").myTab("load", menu.sub);
+                    $("#menus-2").myTab("load", menu.subMenus);
                 } else {
                     $("#menus-2").removeClass("show");
                 }
@@ -113,6 +120,7 @@
 	</script>
 </head>
 <body>
+    <div id="menus-1"></div>
 	<div class="window static">
 		<div class="head">
 			<img class="logo" />
@@ -123,7 +131,6 @@
             </div>
 		</div>
 		<div class="center">
-			<div id="menus-1"></div>
             <div id="menus-2"></div>
             <iframe id="menu-content"></iframe>
 		</div>

@@ -58,7 +58,7 @@
 					alert("登录失败: " + result.message);
 					return;
 				}
-				location.href = "home";
+				location.href = "web";
 			}
 		});
 	}

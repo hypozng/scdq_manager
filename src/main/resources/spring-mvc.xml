@@ -12,8 +12,7 @@
 	<context:property-placeholder location="classpath*:db.properties" />
 
 	<!-- spring扫描的包 -->
-	<context:component-scan base-package="com.scdq.manager.controller" />
-	<context:component-scan base-package="com.scdq.manager.service" />
+	<context:component-scan base-package="com.scdq.manager" />
 
 	<!-- DispatcherServlet不处理静态资源,交给服务器默认的servlet处理 -->
 	<mvc:default-servlet-handler />
@@ -30,7 +29,7 @@
 			<mvc:exclude-mapping path="/login"/>
 			<mvc:exclude-mapping path="/sys/login"/>
 			<mvc:exclude-mapping path="/res/**"/>
-			<bean class="com.scdq.manager.common.LoginInterceptor"/>
+			<bean class="com.scdq.manager.sys.service.LoginInterceptor"/>
 		</mvc:interceptor>
 	</mvc:interceptors>
 
@@ -58,11 +57,11 @@
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="typeAliasesPackage" value="com.scdq.manager.model" />
+		<!--<property name="typeAliasesPackage" value="com.scdq.manager.model" />-->
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.scdq.manager.dao" />
+		<property name="basePackage" value="com.scdq.manager" />
 	</bean>
 </beans>
