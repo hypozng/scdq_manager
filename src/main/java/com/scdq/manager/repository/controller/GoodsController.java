@@ -57,14 +57,14 @@ public class GoodsController {
 		return goodsService.deleteBrand(brandId);
 	}
 	
-	@RequestMapping("/getGoodsesByBrand")
-	public List<Goods> getGoodsesByBrand(int brandId) {
-		return goodsService.getGoodsesByBrand(brandId);
+	@RequestMapping("/getGoodsByBrand")
+	public List<Goods> getGoodsByBrand(int brandId) {
+		return goodsService.getGoodsByBrand(brandId);
 	}
 	
-	@RequestMapping("/getGoodsesByCategory")
-	public List<Goods> getGoodsesByCategory(int categoryId) {
-		return goodsService.getGoodsesByCategory(categoryId);
+	@RequestMapping("/getGoodsByCategory")
+	public List<Goods> getGoodsByCategory(int categoryId) {
+		return goodsService.getGoodsByCategory(categoryId);
 	}
 	
 	@RequestMapping("/addGoods")

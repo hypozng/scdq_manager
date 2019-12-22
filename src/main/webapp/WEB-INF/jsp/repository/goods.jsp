@@ -53,7 +53,7 @@
         });
 
 	    $("#goods-grid").myGrid({
-            "url": "goods/getGoodsesByCategory",
+            "url": "goods/getGoodsByCategory",
 			"autoLoad": false,
 			"columns": [{
 				"title": "品牌",

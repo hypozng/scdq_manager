@@ -292,25 +292,25 @@
          * @param data
          */
         this.load = function(data) {
-            this.data = data || [];
+            this.data = data || this.data || [];
             var $target = $(this.target);
             $target.children().remove(":not(:first)");
-            for (var i in this.data) {
-                var $row = this.buildRow(function($cell, col) {
+            _$each(this.data, function(i, model) {
+                var $row = _this.buildRow(function($cell, col) {
                     $cell.click(function(e) {
                         $(e.target).parent().addClass("selected").siblings().removeClass("selected");
                     });
-                    var value = data[i][col.field];
+                    var value = _$findAttribute(model, col.field);
+                    if (col.formatter) {
+                        value = col.formatter(value, model, i);
+                    }
                     if (value == null) {
                         return;
-                    }
-                    if (col.formatter) {
-                        value = col.formatter(value);
                     }
                     $cell.text(value);
                 });
                 $row.attr("row-index", i).appendTo($target);
-            }
+            });
         };
 
         this.beforeRequest = function() {
@@ -338,6 +338,27 @@
     _$register("myTab", function() {
         var _this = this;
 
+        this.buildTab = function(menu) {
+            var $tab = $("<div></div>").addClass("tab");
+            $tab.click(function(e) {
+                var $tab = $(e.target);
+                $tab.addClass("selected").siblings().removeClass("selected");
+                var menu = _this.data[$tab.attr("data-index")];
+                if (_this.onTabClick(menu) === false) {
+                    return;
+                }
+                if (_this.tabContent) {
+                    _this.tabContent[0].src = menu.url || "";
+                }
+            });
+            if (typeof _this.titleField === "function") {
+                $tab.text(_this.titleField(menu));
+                return $tab;
+            }
+            $tab.text(menu[_this.titleField]);
+            return $tab;
+        };
+
         /**
          * 加载数据
          * @param data
@@ -348,23 +369,11 @@
             if (!this.data) {
                 return;
             }
-            for (var i in data) {
-                var menu = data[i];
-                var $tab = $("<div></div>").addClass("tab")
-                    .attr("tab-index", i)
-                    .text(menu[this.titleField]);
-                $tab.click(function(e) {
-                    var $tab = $(e.target);
-                    $tab.addClass("selected").siblings().removeClass("selected");
-                    var menu = _this.data[$tab.attr("tab-index")];
-                    if (_this.onTabClick(menu) === false) {
-                        return;
-                    }
-                    if (_this.tabContent) {
-                        _this.tabContent[0].src = menu.url || "";
-                    }
-                }).appendTo(this.tabBar);
-            }
+            _$each(this.data, function(i, e) {
+                var $tab = _this.buildTab(e);
+                $tab.attr("data-index", i);
+                _this.tabBar.append($tab);
+            });
             if (this.tabIndex != -1) {
                 this.tabBar.children().eq(this.tabIndex).click();
             }
@@ -409,13 +418,7 @@
         var _this = this;
         var $target = $(this.target);
 
-        /**
-         * 创建字段
-         * @param field
-         */
-        this.buildField = function(field) {
-            var $field = $("<div></div>").addClass("form-field");
-            var $title = $("<label></label>").text(field.title).appendTo($field);
+        this.buildFieldContent = function(field) {
             var $content;
             if (field.type == "select") {
                 $content = $("<select></select>");
@@ -423,14 +426,46 @@
                     field.options.prompt = "请选择" + field.title;
                 }
                 $content.mySelect(field.options);
-            } else {
-                var prompt = field.prompt;
-                if (this.useDefaultPrompt) {
-                    prompt = prompt || "请输入" + field.title;
-                }
-                $content = $("<input/>").attr("type", "text")
-                    .attr("placeholder", prompt);
+                return $content;
             }
+            if (field.type == "action") {
+                $content = $("<div></div>").addClass("content");
+                _$each(field.actions, function(i, e) {
+                    var $action = $("<button></button>").text(e.title);
+                    $action.click(function() {
+                        if (e.onClick) {
+                            e.onClick(_this);
+                        }
+                    }).appendTo($content);
+                });
+                return $content;
+            }
+            $content = $("<input/>").attr("type", "text");
+            if (field.readonly) {
+                $content.attr("readonly", "readonly");
+                return $content;
+            }
+            var prompt = field.prompt;
+            if (this.useDefaultPrompt) {
+                prompt = prompt || "请输入" + field.title;
+            }
+            $content.attr("placeholder", prompt);
+            return $content;
+        };
+
+        /**
+         * 创建字段
+         * @param field
+         */
+        this.buildField = function(field) {
+            if (field.type == "hidden") {
+                var $field = $("<hidden/>");
+                $field.attr("name", field.name);
+                return $field;
+            }
+            var $field = $("<div></div>").addClass("form-field");
+            var $title = $("<label></label>").text(field.title).appendTo($field);
+            var $content = this.buildFieldContent(field);
             $content.attr("name", field.name).val(field.defaultValue).appendTo($field);
             return $field;
         };
@@ -516,6 +551,17 @@
 
         this.initSelect = function() {
             $target.addClass("select").empty();
+            $target.change(function() {
+                if (_this.onSelect == null) {
+                    return;
+                }
+                var index = $target.children(":selected").attr("data-index");
+                if (index == null) {
+                    _this.onSelect(null);
+                    return;
+                }
+                _this.onSelect(_this.data[index]);
+            });
             if (this.prompt) {
                 $("<option></option>").attr("value", "").text(this.prompt).addClass("prompt").appendTo($target);
             }
@@ -527,6 +573,7 @@
             _$each(this.data, function(i, e) {
                 $("<option></option>").text(e[_this.textField])
                     .attr("value", e[_this.valueField])
+                    .attr("data-index", i)
                     .appendTo($target);
             });
         };
@@ -535,8 +582,55 @@
             "data": [],
             "valueField": "value",
             "textField": "text",
-            "prompt": "请选择"
+            "prompt": "请选择",
+            "onSelect": function(model) {
+
+            }
         }, true);
         this.initSelect();
+    });
+
+    _$register("myWindow", function() {
+        var _this = this;
+        var $target = $(this.target);
+
+        /**
+         * 初始化窗口
+         */
+        this.initWindow = function() {
+            var $container = $("<div></div>").addClass("window")
+                .appendTo(win.document.body);
+            _this.container = $container[0];
+
+            var $head = $("<div></div>").addClass("head");
+            $("<img/>").addClass("logo").appendTo($head);
+            $("<span></span>").addClass("title").text(this.title).appendTo($head);
+            $head.appendTo($container);
+
+            var $center = $("<div></div>").addClass("center");
+            $center.append($target).appendTo($container);
+            if (this.width) {
+                $center.width(this.width);
+            }
+            if (this.height) {
+                $center.height(this.height);
+            }
+        };
+
+        /**
+         * 显示窗口
+         */
+        this.show = function() {
+            $(this.container).show();
+        };
+
+        /**
+         * 隐藏窗口
+         */
+        this.hide = function() {
+            $(this.container).hide();
+        };
+
+        this.initWindow();
     });
 })(window, jQuery);

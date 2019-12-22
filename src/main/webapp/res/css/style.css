@@ -95,7 +95,6 @@
 	padding: 10px;
 }
 
-
 .window.static {
 	display: block;
 	position: static;
@@ -142,6 +141,10 @@
 .form-field>select {
 	width: 206px;
 	height: 30px;
+}
+
+[readonly] {
+    background-color: #F0F0F0;
 }
 
 /*-------- tabs --------*/

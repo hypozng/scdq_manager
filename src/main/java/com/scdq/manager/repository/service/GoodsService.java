@@ -101,7 +101,7 @@ public class GoodsService {
 	 * @param brandId 品牌ID
 	 * @return
 	 */
-	public List<Goods> getGoodsesByBrand(long brandId) {
+	public List<Goods> getGoodsByBrand(long brandId) {
 		return goodsDao.findByBrand(brandId);
 	}
 	
@@ -110,7 +110,7 @@ public class GoodsService {
 	 * @param categoryId
 	 * @return
 	 */
-	public List<Goods> getGoodsesByCategory(long categoryId) {
+	public List<Goods> getGoodsByCategory(long categoryId) {
 		List<Goods> list = goodsDao.findByCategory(categoryId);
 		fillBrands(list);
 		return list;
