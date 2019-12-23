@@ -16,6 +16,9 @@
             float:right;
             width: 500px;
         }
+        .grid-cell button {
+            width: auto;
+        }
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -30,18 +33,10 @@
             });
             $("#goods-tab").myTab({
                 "tabBar": "#goods-tab",
-                "url": "goods/getGoodsByCategory",
+                "url": "goods/getCommoditiesByCategory",
                 "autoLoad": false,
                 "tabContent": "",
                 "tabIndex": -1,
-                "requestSuccess": function(data) {
-                    this.load(data);
-                    if (data == null || data.length == 0) {
-                        $("#goods-form").hide();
-                        return;
-                    }
-                    $("#goods-form").show();
-                },
                 "titleField": function (goods) {
                     var brand = (goods && goods.brand && goods.brand.name) || "";
                     return brand + goods.model;
@@ -130,7 +125,19 @@
                     }
                 }, {
                     "field": "count",
-                    "title": "数量"
+                    "title": "数量",
+                    "width": 100,
+                    "renderer": function(value, model, index) {
+                        return "<button onclick=\"javascript:addGoodsCount(" + index + ", -1)\">-</button>"
+                            + "<span style=\"margin:0px 5px\">" + value + "</span>"
+                            + "<button onclick=\"javascript:addGoodsCount(" + index + ", 1)\">+</button>";
+                    }
+                }, {
+                    "field": "operation",
+                    "title": "操作",
+                    "renderer": function(value, model, index) {
+                        return "<button onclick=\"javascript:showGoodsDetail(" + index + ")\">详情</button>"
+                    }
                 }]
             });
 
@@ -139,6 +146,52 @@
                 "height": 320
             });
         });
+
+        /**
+         * 添加商品数量
+         * @param index 行号
+         * @param amount 数量
+         */
+        function addGoodsCount(index, amount) {
+            var data = $("#order-grid").myGrid("data");
+            if (!data) {
+                return;
+            }
+            if (index < 0 || index >= data.length) {
+                return;
+            }
+            var goods = data[index];
+            goods.count += amount;
+            if (goods.count == 0) {
+                data.splice(index, 1);
+            }
+            $("#order-grid").myGrid("load");
+        }
+
+        /// 查看商品详细信息
+        function showGoodsDetail(index) {
+            var data = $("#order-grid").myGrid("data");
+            if (!data) {
+                return;
+            }
+            if (index < 0 || index >= data.length) {
+                return;
+            }
+            console.log(data[index]);
+            $("#goods-form").myForm("load", data[index].goods);
+            $("#goods-window").myWindow("show");
+        }
+
+        function deleteGoods(index) {
+            var data = $("#order-grid").myGrid("data");
+            if (!data) {
+                return;
+            }
+            if (index < 0 || index >= data.length) {
+                return;
+            }
+            data.splice(index, 1);
+        }
     </script>
 </head>
 <body>

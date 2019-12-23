@@ -1,8 +1,6 @@
 package com.scdq.manager.repository.model;
 
 import com.scdq.manager.common.BasicModel;
-import com.scdq.manager.repository.model.Brand;
-import com.scdq.manager.repository.model.Category;
 
 import java.math.BigDecimal;
 
@@ -11,13 +9,13 @@ import java.math.BigDecimal;
  * @author zenghaibo
  * @date 2019-04-10
  */
-public class Goods extends BasicModel {
+public class Commodity extends BasicModel {
 	
 	// 所属种类
-	private Category category;
+	private CommodityCategory category;
 	
 	// 商品品牌
-	private Brand brand;
+	private CommodityBrand brand;
 	
 	// 商品型号
 	private String model;
@@ -43,27 +41,27 @@ public class Goods extends BasicModel {
 	// 备注
 	private String remark;
 
-	public Goods() {
+	public Commodity() {
 		
 	}
 	
-	public Goods(long id) {
+	public Commodity(long id) {
 		super(id);
 	}
 	
-	public Category getCategory() {
+	public CommodityCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(CommodityCategory category) {
 		this.category = category;
 	}
 
-	public Brand getBrand() {
+	public CommodityBrand getBrand() {
 		return brand;
 	}
 
-	public void setBrand(Brand brand) {
+	public void setBrand(CommodityBrand brand) {
 		this.brand = brand;
 	}
 

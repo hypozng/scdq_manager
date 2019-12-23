@@ -304,10 +304,11 @@
                     if (col.formatter) {
                         value = col.formatter(value, model, i);
                     }
-                    if (value == null) {
+                    if (col.renderer && typeof col.renderer === "function") {
+                        $cell.append(col.renderer(value, model, i));
                         return;
                     }
-                    $cell.text(value);
+                    $cell.text(value || "");
                 });
                 $row.attr("row-index", i).appendTo($target);
             });
