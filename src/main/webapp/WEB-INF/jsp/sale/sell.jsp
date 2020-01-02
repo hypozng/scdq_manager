@@ -12,12 +12,19 @@
         #goods-tab .tab {
             font-size: 10px;
         }
+        #order-box {
+            float: left;
+            margin-left: 10px;
+        }
         #order-grid {
-            float:right;
-            width: 500px;
+            width: 100%;
+            float: none;
         }
         .grid-cell button {
             width: auto;
+        }
+        #order-button {
+            margin: 10px auto;
         }
     </style>
     <script type="text/javascript">
@@ -122,6 +129,9 @@
                         var brand = (goods.brand && goods.brand.name) || "";
                         var model = goods.model || "";
                         return brand + model + category;
+                    },
+                    "renderer": function(val, goods, index) {
+                        return "<a href=\"javascript:showGoodsDetail(" + index + ");\">" + val + "</a>"
                     }
                 }, {
                     "field": "count",
@@ -132,12 +142,6 @@
                             + "<span style=\"margin:0px 5px\">" + value + "</span>"
                             + "<button onclick=\"javascript:addGoodsCount(" + index + ", 1)\">+</button>";
                     }
-                }, {
-                    "field": "operation",
-                    "title": "操作",
-                    "renderer": function(value, model, index) {
-                        return "<button onclick=\"javascript:showGoodsDetail(" + index + ")\">详情</button>"
-                    }
                 }]
             });
 
@@ -145,7 +149,21 @@
                 "title": "商品信息",
                 "height": 320
             });
+            adjustLayout();
         });
+
+        /**
+         * 调整布局
+         */
+        function adjustLayout() {
+            var width = $(document).width() - 20;
+            console.log(width);
+            var orderGridWidth = width - 10
+                - $("#categories-tab")[0].offsetWidth
+                - $("#goods-tab")[0].offsetWidth;
+            console.log(orderGridWidth);
+            $("#order-box").width(orderGridWidth);
+        }
 
         /**
          * 添加商品数量
@@ -166,6 +184,7 @@
                 data.splice(index, 1);
             }
             $("#order-grid").myGrid("load");
+            adjustLayout();
         }
 
         /// 查看商品详细信息
@@ -197,8 +216,10 @@
 <body>
 <div id="categories-tab"></div>
 <div id="goods-tab"></div>
-<div id="order-grid"></div>
-
+<div id="order-box">
+    <div id="order-grid"></div>
+    <button id="order-button">创建订单</button>
+</div>
 <div id="goods-window">
     <div id="goods-form"></div>
 </div>

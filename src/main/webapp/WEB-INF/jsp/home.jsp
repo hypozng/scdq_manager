@@ -91,7 +91,6 @@
 
         $(document).ready(function () {
             adjustLayout();
-            console.log($(document).height());
             $("#menus-2").myTab({
                 "tabBar": "#menus-2",
                 "tabContent": "#menu-content",

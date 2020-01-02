@@ -13,40 +13,54 @@ import java.util.List;
  */
 public class Order extends BasicModel {
 
-	// 购买数量
-	private int count;
+	/** 顾客姓名 */
+	private String customerName;
 
-	// 订单总价
+	/** 顾客电话 */
+	private String customerPhone;
+
+	/** 顾客住址 */
+	private String customerAddress;
+
+	/** 订单价格 */
 	private BigDecimal totalPrice;
-	
-	// 交易价格
-	private BigDecimal realPrice;
 
-	// 订单状态
+	/** 成交价 */
+	private BigDecimal finalPrice;
+
+	/** 订单状态 */
 	private int status;
-	
-	// 支付方式
-	private int payment;
-	
-	// 购买商品列表
-	private List<OrderGoods> gooses;
 
-	public Order() {
-		super();
+	/** 备注 */
+	private String remark;
+
+	/** 订单商品列表 */
+	private List<OrderCommodity> commodities;
+
+	public String getCustomerName() {
+		return customerName;
 	}
 
-	public Order(long id) {
-		super(id);
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
-	public int getCount() {
-		return count;
+	public String getCustomerPhone() {
+		return customerPhone;
 	}
 
-	public void setCount(int count) {
-		this.count = count;
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
 	}
-	
+
+	public String getCustomerAddress() {
+		return customerAddress;
+	}
+
+	public void setCustomerAddress(String customerAddress) {
+		this.customerAddress = customerAddress;
+	}
+
 	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
@@ -55,12 +69,12 @@ public class Order extends BasicModel {
 		this.totalPrice = totalPrice;
 	}
 
-	public BigDecimal getRealPrice() {
-		return realPrice;
+	public BigDecimal getFinalPrice() {
+		return finalPrice;
 	}
 
-	public void setRealPrice(BigDecimal realPrice) {
-		this.realPrice = realPrice;
+	public void setFinalPrice(BigDecimal finalPrice) {
+		this.finalPrice = finalPrice;
 	}
 
 	public int getStatus() {
@@ -71,19 +85,19 @@ public class Order extends BasicModel {
 		this.status = status;
 	}
 
-	public int getPayment() {
-		return payment;
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setPayment(int payment) {
-		this.payment = payment;
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
-	public List<OrderGoods> getGooses() {
-		return gooses;
+	public List<OrderCommodity> getCommodities() {
+		return commodities;
 	}
 
-	public void setGooses(List<OrderGoods> gooses) {
-		this.gooses = gooses;
+	public void setCommodities(List<OrderCommodity> commodities) {
+		this.commodities = commodities;
 	}
 }
