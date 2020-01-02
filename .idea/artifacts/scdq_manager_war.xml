@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="scdq_manager:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="scdq_manager.war">
-      <element id="artifact" artifact-name="scdq_manager:war exploded" />
-    </root>
-  </artifact>
-</component>
