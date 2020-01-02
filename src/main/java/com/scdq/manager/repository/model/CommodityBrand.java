@@ -7,7 +7,7 @@ import com.scdq.manager.common.BasicModel;
  * @author zenghaibo
  * @date 2019-04-10
  */
-public class Brand extends BasicModel {
+public class CommodityBrand extends BasicModel {
 	
 	// 品牌名称
 	private String name;
@@ -15,11 +15,11 @@ public class Brand extends BasicModel {
 	// 备注
 	private String remark;
 	
-	public Brand() {
+	public CommodityBrand() {
 		super();
 	}
 	
-	public Brand(long id) {
+	public CommodityBrand(long id) {
 		super(id);
 	}
 

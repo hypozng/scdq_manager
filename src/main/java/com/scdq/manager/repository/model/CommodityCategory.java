@@ -7,7 +7,7 @@ import com.scdq.manager.common.BasicModel;
  * @author zenghaibo
  * @date 2019-04-10
  */
-public class Category extends BasicModel {
+public class CommodityCategory extends BasicModel {
 	
 	// 种类名称
 	private String name;
@@ -15,11 +15,11 @@ public class Category extends BasicModel {
 	// 备注
 	private String remark;
 	
-	public Category() {
+	public CommodityCategory() {
 		super();
 	}
 	
-	public Category(long id) {
+	public CommodityCategory(long id) {
 		super(id);
 	}
 

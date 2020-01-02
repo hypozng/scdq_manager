@@ -1,7 +1,7 @@
 package com.scdq.manager.sale.model;
 
 import com.scdq.manager.common.BasicModel;
-import com.scdq.manager.repository.model.Goods;
+import com.scdq.manager.repository.model.Commodity;
 
 import java.math.BigDecimal;
 
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class OrderGoods extends BasicModel {
 
 	// 商品
-	private Goods goods;
+	private Commodity goods;
 	
 	// 购买数量
 	private int count;
@@ -21,11 +21,11 @@ public class OrderGoods extends BasicModel {
 	// 合计价格
 	private BigDecimal totalPrice;
 
-	public Goods getGoods() {
+	public Commodity getGoods() {
 		return goods;
 	}
 
-	public void setGoods(Goods goods) {
+	public void setGoods(Commodity goods) {
 		this.goods = goods;
 	}
 
