@@ -509,9 +509,27 @@
         this.getData = function() {
             var result = {};
             _$each(this.fields, function(i, e) {
-                result[e.name] = $target.find("[name=\""+e.name+"\"]").val();
+                if (e.type == "action") {
+                    return;
+                }
+                var val = $target.find("[name=\""+e.name+"\"]").val();
+                if (e.dataType == "float") {
+                    val = val && !isNaN(val) ? parseFloat(val) : 0.0;
+                } else if (e.dataType == "int") {
+                    val = val && !isNaN(val) ? parseInt(val) : 0;
+                }
+                result[e.name] = val;
             });
             return result;
+        };
+
+        this.clear = function() {
+            _$each(this.fields, function(i, e) {
+                if (e.type == "action") {
+                    return;
+                }
+                $target.find("[name=\"" + e.name + "\"]").val("");
+            });
         };
 
         /**

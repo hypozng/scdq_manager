@@ -13,6 +13,9 @@ public class OrderCommodity extends BasicModel {
     /** 订单ID */
     private long orderId;
 
+    /** 商品ID */
+    private long commodityId;
+
     /** 商品数量 */
     private int count;
 
@@ -34,6 +37,14 @@ public class OrderCommodity extends BasicModel {
 
     public void setOrderId(long orderId) {
         this.orderId = orderId;
+    }
+
+    public long getCommodityId() {
+        return commodityId;
+    }
+
+    public void setCommodityId(long commodityId) {
+        this.commodityId = commodityId;
     }
 
     public int getCount() {

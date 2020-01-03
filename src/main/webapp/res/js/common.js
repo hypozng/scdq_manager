@@ -51,3 +51,18 @@ function findFields($form) {
 	});
 	return data;
 }
+
+function postApi(url, data, success) {
+	$.ajax({
+		"url": url,
+		"type": "post",
+		"contentType": "application/json",
+		"data": JSON.stringify(data),
+		"dataType": "json",
+		"success": success,
+		"error": function(e) {
+			console.log(e);
+			alert(e);
+		}
+	});
+}

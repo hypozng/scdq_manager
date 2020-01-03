@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface OrderDao extends BasicDao {
-    String TABLE = "order";
+    String TABLE = "`order`";
 
     String INSERT_COLS = "customer_name, customer_phone, customer_address, total_price, final_price, status, remark";
 	
@@ -29,6 +29,7 @@ public interface OrderDao extends BasicDao {
 
     @Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{order.customerName}, #{order.customerPhone}, #{order.customerAddress}, " +
             "#{order.totalPrice}, #{order.finalPrice}, #{order.status}, #{order.remark})")
+    @SelectKey(statement = "select last_insert_id()", before = false, keyProperty = "order.id", resultType = long.class, keyColumn = "id")
     int insert(@Param("order") Order order);
 
     @Update("<script>update " + TABLE + " set update_time=now()"

@@ -23,7 +23,10 @@
         .grid-cell button {
             width: auto;
         }
-        #order-button {
+        .grid-cell input {
+            width: 100%;
+        }
+        #create-order-button {
             margin: 10px auto;
         }
     </style>
@@ -49,26 +52,7 @@
                     return brand + goods.model;
                 },
                 "onTabClick": function(goods) {
-                    var orderData = $("#order-grid").myGrid("data");
-                    if (orderData == null) {
-                        orderData = [];
-                        $("#order-grid").myGrid("attr", "data", orderData);
-                    }
-                    var flag = false;
-                    $.each(orderData, function(i, e) {
-                        if (e.goods.id == goods.id) {
-                            flag = true;
-                            ++e.count;
-                            return false;
-                        }
-                    });
-                    if (!flag) {
-                        orderData.push({
-                            "goods": goods,
-                            "count": 1
-                        });
-                    }
-                    $("#order-grid").myGrid("load");
+                    addGoodsCount(goods, 1);
                 }
             });
             $("#categories-tab").myTab("request", "goods/getCategories");
@@ -112,7 +96,7 @@
                     "type": "action",
                     "actions": [{
                         "title": "关闭",
-                        "onClick": function(_this) {
+                        "onClick": function() {
                             $("#goods-window").myWindow("hide");
                         }
                     }]
@@ -142,6 +126,13 @@
                             + "<span style=\"margin:0px 5px\">" + value + "</span>"
                             + "<button onclick=\"javascript:addGoodsCount(" + index + ", 1)\">+</button>";
                     }
+                }, {
+                    "field": "finalPrice",
+                    "title": "成交价",
+                    "width": 100,
+                    "renderer": function(value, model, index) {
+                        return "<input type=\"text\" value=\"" + value + "\" oninput=\"javascript:updateOrderFinalPrice(" + index + ", this.value)\">";
+                    }
                 }]
             });
 
@@ -149,6 +140,49 @@
                 "title": "商品信息",
                 "height": 320
             });
+
+            $("#order-form").myForm({
+                "fields": [{
+                    "name": "customerName",
+                    "title": "客户姓名",
+                }, {
+                    "name": "customerPhone",
+                    "title": "客户电话"
+                }, {
+                    "name": "customerAddress",
+                    "title": "客户住址"
+                }, {
+                    "name": "finalPrice",
+                    "title": "成交价",
+                    "dataType": "float"
+                }, {
+                    "name": "remark",
+                    "title": "备注"
+                }, {
+                    "type": "action",
+                    "actions": [{
+                        "title": "提交",
+                        "onClick": submitOrder
+                    }, {
+                        "title": "取消",
+                        "onClick": function () {
+                            $("#order-window").myWindow("hide");
+                        }
+                    }]
+                }]
+            });
+
+            $("#order-window").myWindow({
+                "title": "提交订单",
+                "height": 400
+            });
+
+            $("#create-order-button").click(function() {
+                var order = $("#order-form").myForm("data") || {};
+                console.log(order);
+                $("#order-window").myWindow("show")
+            });
+
             adjustLayout();
         });
 
@@ -157,46 +191,70 @@
          */
         function adjustLayout() {
             var width = $(document).width() - 20;
-            console.log(width);
             var orderGridWidth = width - 10
                 - $("#categories-tab")[0].offsetWidth
                 - $("#goods-tab")[0].offsetWidth;
-            console.log(orderGridWidth);
             $("#order-box").width(orderGridWidth);
         }
 
         /**
          * 添加商品数量
-         * @param index 行号
+         * @param goods 行号
          * @param amount 数量
          */
-        function addGoodsCount(index, amount) {
-            var data = $("#order-grid").myGrid("data");
-            if (!data) {
+        function addGoodsCount(goods, amount) {
+            var data = $("#order-grid").myGrid("data") || [];
+            var orderGoods;
+            var index;
+            if (typeof goods == "object") {
+                $.each(data, function(i, e) {
+                    if (e.goods.id == goods.id) {
+                        orderGoods = e;
+                        index = i;
+                        return false;
+                    }
+                });
+                if (!orderGoods) {
+                    orderGoods = {
+                        "goods": goods,
+                        "finalPrice": 0,
+                        "count": 0
+                    };
+                    data.push(orderGoods);
+                }
+            } else if (typeof goods == "number") {
+                index = goods;
+                var data = $("#order-grid").myGrid("data");
+                if (data) {
+                    orderGoods = data[goods];
+                }
+            }
+            if (!orderGoods) {
                 return;
             }
-            if (index < 0 || index >= data.length) {
-                return;
-            }
-            var goods = data[index];
-            goods.count += amount;
-            if (goods.count == 0) {
+            orderGoods.count += amount;
+            orderGoods.finalPrice += orderGoods.goods.salePrice * amount;
+            if (orderGoods.count == 0) {
                 data.splice(index, 1);
             }
-            $("#order-grid").myGrid("load");
+            $("#order-grid").myGrid("load", data);
             adjustLayout();
+        }
+
+        function updateOrderFinalPrice(index, price) {
+            var data = $("#order-grid").myGrid("data");
+            if (!data || !data[index] || isNaN(price)) {
+                return;
+            }
+            data[index].finalPrice = parseFloat(price);
         }
 
         /// 查看商品详细信息
         function showGoodsDetail(index) {
             var data = $("#order-grid").myGrid("data");
-            if (!data) {
+            if (!data || !data[index]) {
                 return;
             }
-            if (index < 0 || index >= data.length) {
-                return;
-            }
-            console.log(data[index]);
             $("#goods-form").myForm("load", data[index].goods);
             $("#goods-window").myWindow("show");
         }
@@ -211,6 +269,35 @@
             }
             data.splice(index, 1);
         }
+
+        /**
+         * 提交订单
+         */
+        function submitOrder() {
+            if (!confirm("确认提交订单?")) {
+                return;
+            }
+            var order = $("#order-form").myForm("getData");
+            var goodsList = [];
+            $.each($("#order-grid").myGrid("data"), function(i, e) {
+                goodsList.push({
+                    "commodityId": e.goods.id,
+                    "count": e.count,
+                    "finalPrice": e.finalPrice
+                });
+            });
+            order.commodities = goodsList;
+            postApi("sale/addOrder", order, function(result) {
+                if (result.code == 1) {
+                    alert("添加订单失败\r\n" + result.message);
+                    return;
+                }
+                alert("添加订单成功");
+                $("#order-grid").myGrid("load", []);
+                $("#order-form").myForm("clear");
+                $("#order-window").myWindow("hide");
+            });
+        }
     </script>
 </head>
 <body>
@@ -218,10 +305,13 @@
 <div id="goods-tab"></div>
 <div id="order-box">
     <div id="order-grid"></div>
-    <button id="order-button">创建订单</button>
+    <button id="create-order-button">创建订单</button>
 </div>
 <div id="goods-window">
     <div id="goods-form"></div>
+</div>
+<div id="order-window">
+    <div id="order-form"></div>
 </div>
 </body>
 </html>
