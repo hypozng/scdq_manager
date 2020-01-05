@@ -13,14 +13,8 @@ import java.util.List;
  */
 public class Order extends BasicModel {
 
-	/** 顾客姓名 */
-	private String customerName;
-
-	/** 顾客电话 */
-	private String customerPhone;
-
-	/** 顾客住址 */
-	private String customerAddress;
+    /** 顾客ID */
+    private long customerId;
 
 	/** 订单价格 */
 	private BigDecimal totalPrice;
@@ -37,31 +31,18 @@ public class Order extends BasicModel {
 	/** 订单商品列表 */
 	private List<OrderCommodity> commodities;
 
-	public String getCustomerName() {
-		return customerName;
-	}
+    /** 顾客信息 */
+    private Customer customer;
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
+    public long getCustomerId() {
+        return customerId;
+    }
 
-	public String getCustomerPhone() {
-		return customerPhone;
-	}
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
+    }
 
-	public void setCustomerPhone(String customerPhone) {
-		this.customerPhone = customerPhone;
-	}
-
-	public String getCustomerAddress() {
-		return customerAddress;
-	}
-
-	public void setCustomerAddress(String customerAddress) {
-		this.customerAddress = customerAddress;
-	}
-
-	public BigDecimal getTotalPrice() {
+    public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
@@ -100,4 +81,12 @@ public class Order extends BasicModel {
 	public void setCommodities(List<OrderCommodity> commodities) {
 		this.commodities = commodities;
 	}
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 }
