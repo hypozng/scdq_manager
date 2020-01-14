@@ -19,7 +19,7 @@ public class Menu extends BasicModel {
     private String url;
 
     /** 父级菜单ID */
-    private Long parentId;
+    private String parentId;
 
     /** 备注 */
     private String remark;
@@ -51,11 +51,11 @@ public class Menu extends BasicModel {
         this.url = url;
     }
 
-    public Long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

@@ -2,31 +2,29 @@ package com.scdq.manager.sys.dao;
 
 import com.scdq.manager.common.BasicDao;
 import com.scdq.manager.sys.model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface UserDao extends BasicDao {
-	String COLS = "username, phone, email";
+	String INSERT_COLS = "id, username, phone, email";
 	
-	String COLUMNS = "username, phone, email, " + COMMON_FIELDS;
+	String SELECT_COLS = "username, phone, email, " + COMMON_FIELDS;
 	
 	String TABLE = "user";
 	
-	String SELECT_SQL = "select " + COLUMNS + " from " + TABLE + " where " + NOT_DELETED;
+	String SELECT_SQL = "select " + SELECT_COLS + " from " + TABLE + " where " + NOT_DELETED;
 	
 	@Select(SELECT_SQL)
 	List<User> findAll();
 	
 	@Select(SELECT_SQL + " and id=#{id}")
-	User get(@Param("id") long id);
+	User get(@Param("id") String id);
 	
-	@Insert("insert into " + TABLE + "(" + COLS + ") values(#{user.username}, #{user.phone}, #{user.email})")
+	@Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{user.id}, #{user.username}, #{user.phone}, #{user.email})")
+	@SelectKey(statement = "select uuid()", before = true, keyProperty = "user.id", resultType = String.class)
 	int insert(@Param("user") User user);
 
 	@Update("update " + TABLE + " set " + HAS_DELETED + " where id=#{id}")

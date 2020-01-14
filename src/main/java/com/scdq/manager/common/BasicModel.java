@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class BasicModel {
 	// ID
-	private long id;
+	private String id;
 
 	// 创建时间
 	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
@@ -31,15 +31,15 @@ public class BasicModel {
 
 	}
 
-	public BasicModel(long id) {
+	public BasicModel(String id) {
 		this.id = id;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -71,7 +71,7 @@ public class BasicModel {
 	public boolean equals(Object obj) {
 		if (obj instanceof BasicModel) {
 			BasicModel model = (BasicModel) obj;
-			return model.id == id;
+			return model.getId() != null && model.getId().equals(getId());
 		}
 		return super.equals(obj);
 	}
