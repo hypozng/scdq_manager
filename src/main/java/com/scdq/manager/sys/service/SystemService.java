@@ -131,12 +131,12 @@ public class SystemService {
     public ResponseData<List<Menu>> getMenus() {
         List<Menu> menus = new ArrayList<>();
         List<Menu> allMenus = menuDao.findAll();
-        Map<Long, Menu> idAndMenuMap = new HashMap<>();
+        Map<String, Menu> idAndMenuMap = new HashMap<>();
         for (Menu menu : allMenus) {
             idAndMenuMap.put(menu.getId(), menu);
         }
         for (Menu m : allMenus) {
-            if (m == null || m.getParentId() == null || m.getParentId() == 0) {
+            if (m == null || m.getParentId() == null || m.getParentId().isEmpty()) {
                 continue;
             }
             Menu menu = idAndMenuMap.get(m.getParentId());
@@ -152,7 +152,7 @@ public class SystemService {
             if (m == null || m.getParentId() == null) {
                 continue;
             }
-            if (m.getParentId() == 0) {
+            if (m.getParentId().isEmpty()) {
                 menus.add(m);
             }
         }

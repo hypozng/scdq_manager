@@ -18,8 +18,8 @@ public class CommodityCategory extends BasicModel {
 	public CommodityCategory() {
 		super();
 	}
-	
-	public CommodityCategory(long id) {
+
+	public CommodityCategory(String id) {
 		super(id);
 	}
 

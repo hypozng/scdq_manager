@@ -22,7 +22,7 @@ public class Todo extends BasicModel {
 		super();
 	}
 	
-	public Todo(long id) {
+	public Todo(String id) {
 		super(id);
 	}
 

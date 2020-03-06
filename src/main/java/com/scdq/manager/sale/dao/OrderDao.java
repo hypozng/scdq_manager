@@ -27,10 +27,9 @@ public interface OrderDao extends BasicDao {
     @Update("update " + TABLE + " set " + HAS_DELETED + " where id=#{id}")
     int delete(@Param("id") int id);
 
-    @Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{order.customerId}, " +
-            "#{order.totalPrice}, #{order.finalPrice}, #{order.status}, #{order.remark})")
-    @SelectKey(statement = "select last_insert_id()", before = false,
-            keyProperty = "order.id", resultType = long.class)
+    @Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{order.customerId}, #{order.totalPrice}, " +
+            "#{order.finalPrice}, #{order.status}, #{order.remark})")
+    @SelectKey(statement = "select uuid()", before = true, keyProperty = "order.id", resultType = String.class)
     int insert(@Param("order") Order order);
 
     @Update("<script>update " + TABLE + " set update_time=now()"

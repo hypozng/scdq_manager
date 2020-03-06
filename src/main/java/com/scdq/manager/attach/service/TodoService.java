@@ -43,7 +43,7 @@ public class TodoService {
 	 * 删除待办
 	 * @return
 	 */
-	public boolean deleteTodo(long todoId) {
+	public boolean deleteTodo(String todoId) {
 		return todoDao.delete(todoId) > 0;
 	}
 }

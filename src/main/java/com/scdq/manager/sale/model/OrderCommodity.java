@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 public class OrderCommodity extends BasicModel {
 
     /** 订单ID */
-    private long orderId;
+    private String orderId;
 
     /** 商品ID */
-    private long commodityId;
+    private String commodityId;
 
     /** 商品数量 */
     private int count;
@@ -31,19 +31,19 @@ public class OrderCommodity extends BasicModel {
     /** 商品信息 */
     private Commodity commodity;
 
-    public long getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(long orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
-    public long getCommodityId() {
+    public String getCommodityId() {
         return commodityId;
     }
 
-    public void setCommodityId(long commodityId) {
+    public void setCommodityId(String commodityId) {
         this.commodityId = commodityId;
     }
 

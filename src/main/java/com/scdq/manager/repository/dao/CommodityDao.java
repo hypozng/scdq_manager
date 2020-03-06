@@ -3,11 +3,7 @@ package com.scdq.manager.repository.dao;
 import java.util.List;
 
 import com.scdq.manager.common.BasicDao;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import com.scdq.manager.repository.model.Commodity;
@@ -16,7 +12,7 @@ import com.scdq.manager.repository.model.Commodity;
 public interface CommodityDao extends BasicDao {
     String TABLE = "commodity";
 
-    String INSERT_COLS = "category_id, brand_id, model, bar_code, property, purchase_price, sale_price, preferential_price, count, remark";
+    String INSERT_COLS = "id, category_id, brand_id, model, bar_code, property, purchase_price, sale_price, preferential_price, count, remark";
 	
 	String SELECT_COLS = "category_id as `category.id`, brand_id as `brand.id`, model, bar_code as barCode, property,"
 			+ "purchase_price as purchasePrice, sale_price as salePrice, preferential_price"
@@ -28,18 +24,20 @@ public interface CommodityDao extends BasicDao {
 	List<Commodity> findAll();
 
     @Select(SELECT_SQL + " and id=#{id}")
-    Commodity get(@Param("id") long id);
+    Commodity get(@Param("id") String id);
 
-    @Delete("update " + TABLE + " set " + HAS_DELETED + " where id=#{id}")
-    int delete(@Param("id") int id);
+    @Update("update " + TABLE + " set " + HAS_DELETED + " where id=#{id}")
+    int delete(@Param("id") String id);
 
-    @Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{commodity.category.id}, #{commodity.brand.id}, #{commodity.model}, #{commodity.barCode}"
-            + "#{commodity.property}, #{commodity.purchasePrice}, #{commodity.salePrice}, #{commodity.preferentialPrice}, #{commodity.count}, #{commodity.remark})")
+    @Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{commodity.id}, #{commodity.category.id}, " +
+            "#{commodity.brand.id}, #{commodity.model}, #{commodity.barCode}, #{commodity.property}, #{commodity.purchasePrice}, " +
+            "#{commodity.salePrice}, #{commodity.preferentialPrice}, #{commodity.count}, #{commodity.remark})")
+    @SelectKey(statement = "select uuid()", before = true, keyProperty = "commodity.id", resultType = String.class)
     int insert(@Param("commodity") Commodity commodity);
 
     @Update("<script>update " + TABLE + " set update_time=now()"
-            + "<if test=\"commodity.brand!=null and commodity.brand.id!=0\">, brand_id=#{commodity.brand.id}</if>"
-            + "<if test=\"commodity.category!=null and commodity.category.id!=0\">, category_id=#{commodity.category.id}</if>"
+            + "<if test=\"commodity.brand!=null and commodity.brand.id!=null\">, brand_id=#{commodity.brand.id}</if>"
+            + "<if test=\"commodity.category!=null and commodity.category.id!=null\">, category_id=#{commodity.category.id}</if>"
             + "<if test=\"commodity.model!=null\">, model=#{commodity.model}</if>"
             + "<if test=\"commodity.barCode!=null\">, bar_code=#{commodity.barCode}</if>"
             + "<if test=\"commodity.property!=null\">, property=#{commodity.property}</if>"
@@ -51,11 +49,11 @@ public interface CommodityDao extends BasicDao {
     int update(@Param("commodity") Commodity commodity);
 
     @Select(SELECT_SQL + " and brand_id=#{brandId}")
-	List<Commodity> findByBrand(@Param("brandId") long brandId);
+	List<Commodity> findByBrand(@Param("brandId") String brandId);
 	
 	@Select(SELECT_SQL + " and category_id=#{categoryId}")
-	List<Commodity> findByCategory(@Param("categoryId") long categoryId);
+	List<Commodity> findByCategory(@Param("categoryId") String categoryId);
 	
-	@Update("update " + TABLE + " set count=#{count} where id=#{goodsId}")
-	int modifyCount(@Param("goodsId") long goodsId, @Param("count") int count);
+	@Update("update " + TABLE + " set count=#{count} where id=#{commodityId}")
+	int modifyCount(@Param("commodityId") String commodityId, @Param("count") int count);
 }

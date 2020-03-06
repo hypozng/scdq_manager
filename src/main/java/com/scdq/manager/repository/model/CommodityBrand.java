@@ -19,7 +19,7 @@ public class CommodityBrand extends BasicModel {
 		super();
 	}
 	
-	public CommodityBrand(long id) {
+	public CommodityBrand(String id) {
 		super(id);
 	}
 

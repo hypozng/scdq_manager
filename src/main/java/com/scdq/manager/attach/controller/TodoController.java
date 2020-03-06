@@ -32,7 +32,7 @@ public class TodoController {
 	}
 	
 	@RequestMapping("/deleteTodo")
-	public boolean deleteTodo(long todoId) {
+	public boolean deleteTodo(String todoId) {
 		return todoService.deleteTodo(todoId);
 	}
 }

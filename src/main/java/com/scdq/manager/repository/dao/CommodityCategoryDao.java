@@ -4,17 +4,14 @@ import java.util.List;
 
 import com.scdq.manager.common.BasicDao;
 import com.scdq.manager.repository.model.CommodityCategory;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommodityCategoryDao extends BasicDao {
 	String TABLE = "commodity_category";
 
-	String INSERT_COLS = "name, remark";
+	String INSERT_COLS = "id, name, remark";
 
 	String SELECT_COLS = "name, remark, " + COMMON_FIELDS;
 
@@ -24,12 +21,13 @@ public interface CommodityCategoryDao extends BasicDao {
 	List<CommodityCategory> findAll();
 
 	@Select(SELECT_SQL + " and id=#{id}")
-    CommodityCategory get(@Param("id") long id);
+    CommodityCategory get(@Param("id") String id);
 
 	@Update("update " + TABLE + " set " + HAS_DELETED + " where id=#{id}")
-	int delete(@Param("id") long id);
+	int delete(@Param("id") String id);
 
-	@Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{category.name}, #{category.remark})")
+	@Insert("insert into " + TABLE + "(" + INSERT_COLS + ") values(#{category.id}, #{category.name}, #{category.remark})")
+	@SelectKey(statement = "select uuid()", before = true, keyProperty = "category.id", resultType = String.class)
 	int insert(@Param("category") CommodityCategory category);
 
 	@Update("<script>update " + TABLE + " set update_time=now()"

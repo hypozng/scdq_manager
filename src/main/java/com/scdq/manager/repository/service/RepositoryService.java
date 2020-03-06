@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.scdq.manager.common.ResponseData;
+import com.scdq.manager.common.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,44 +23,55 @@ public class RepositoryService {
 	private CommodityDao commodityDao;
 	
 	@Autowired
-	private CommodityBrandDao commodityBrandDao;
+	private CommodityBrandDao brandDao;
 	
 	@Autowired
-	private CommodityCategoryDao CommodityCategoryDao;
+	private CommodityCategoryDao categoryDao;
 	
 	/**
 	 * 获取商品种类列表
 	 * @return
 	 */
 	public List<CommodityCategory> getCategories() {
-		return CommodityCategoryDao.findAll();
+		return categoryDao.findAll();
 	}
 	
 	/**
-	 * 添加商品类别
+	 * 保存商品类别信息
 	 * @param category
 	 * @return
 	 */
-	public long addCategory(CommodityCategory category) {
-		return CommodityCategoryDao.insert(category);
+	public ResponseData<CommodityCategory> saveCategory(CommodityCategory category) {
+		if (category == null) {
+			return new ResponseData<>("信息不能为空");
+		}
+		int rows = StringUtils.isNullOrEmpty(category.getId())
+				? categoryDao.insert(category)
+				: categoryDao.update(category);
+		if (rows == 0) {
+			return new ResponseData<>("数据库操作失败");
+		}
+		return new ResponseData<>(category);
 	}
 	
 	/**
-	 * 修改商品类别
-	 * @param category
+	 * 删除商品类别信息
+	 * @param id
 	 * @return
 	 */
-	public boolean updateCategory(CommodityCategory category) {
-		return CommodityCategoryDao.update(category) > 0;
-	}
-	
-	/**
-	 * 删除商品类别
-	 * @param categoryId
-	 * @return
-	 */
-	public boolean deleteCategory(long categoryId) {
-		return CommodityCategoryDao.delete(categoryId) > 0;
+	public ResponseData<CommodityCategory> deleteCategory(String id) {
+		if (StringUtils.isNullOrEmpty(id)) {
+			return new ResponseData<>("信息不能为空");
+		}
+		CommodityCategory category = categoryDao.get(id);
+		if (category == null) {
+			return new ResponseData<>("未找到相关数据");
+		}
+		int rows = categoryDao.delete(category.getId());
+		if (rows == 0) {
+			return new ResponseData<>("数据库操作失败");
+		}
+		return new ResponseData<>(category);
 	}
 	
 	/**
@@ -66,34 +79,45 @@ public class RepositoryService {
 	 * @return 
 	 */
 	public List<CommodityBrand> getBrands() {
-		return commodityBrandDao.findAll();
+		return brandDao.findAll();
 	}
 	
 	/**
-	 * 新增商品品牌
+	 * 保存品牌信息
 	 * @param brand
 	 * @return
 	 */
-	public long addBrand(CommodityBrand brand) {
-		return commodityBrandDao.insert(brand);
-	}
-	
-	/**
-	 * 修改商品品牌
-	 * @param brand
-	 * @return
-	 */
-	public boolean updateBrand(CommodityBrand brand) {
-		return commodityBrandDao.update(brand) > 0;
+	public ResponseData<CommodityBrand> saveBrand(CommodityBrand brand) {
+		if (brand == null) {
+			return new ResponseData<>("数据不能为空");
+		}
+		int rows = StringUtils.isNullOrEmpty(brand.getId())
+				? brandDao.insert(brand)
+				: brandDao.update(brand);
+		if (rows == 0) {
+			return new ResponseData<>("数据库操作失败");
+		}
+		return new ResponseData<>(brand);
 	}
 	
 	/**
 	 * 删除商品品牌
-	 * @param brandId
+	 * @param id
 	 * @return
 	 */
-	public boolean deleteBrand(long brandId) {
-		return commodityBrandDao.delete(brandId) > 0;
+	public ResponseData<CommodityBrand> deleteBrand(String id) {
+		if (StringUtils.isNullOrEmpty(id)) {
+			return new ResponseData<>("信息不能为空");
+		}
+		CommodityBrand brand = brandDao.get(id);
+		if (brand == null) {
+			return new ResponseData<>("未找到相关信息");
+		}
+		int rows = brandDao.delete(brand.getId());
+		if (rows == 0) {
+			return new ResponseData<>("数据库操作失败");
+		}
+		return new ResponseData<>(brand);
 	}
 	
 	/**
@@ -101,7 +125,7 @@ public class RepositoryService {
 	 * @param brandId 品牌ID
 	 * @return
 	 */
-	public List<Commodity> getCommoditiesByBrand(long brandId) {
+	public List<Commodity> getCommoditiesByBrand(String brandId) {
         List<Commodity> commodities = commodityDao.findByBrand(brandId);
         fillBrands(commodities);
         fillCategories(commodities);
@@ -113,7 +137,7 @@ public class RepositoryService {
 	 * @param categoryId
 	 * @return
 	 */
-	public List<Commodity> getCommoditiesByCategory(long categoryId) {
+	public List<Commodity> getCommoditiesByCategory(String categoryId) {
 		List<Commodity> commodities = commodityDao.findByCategory(categoryId);
 		fillBrands(commodities);
         fillCategories(commodities);
@@ -129,8 +153,8 @@ public class RepositoryService {
 		if (commodities == null) {
 			return commodities;
 		}
-		Map<Long, CommodityBrand> brands = new HashMap<>();
-		for (CommodityBrand brand : commodityBrandDao.findAll()) {
+		Map<String, CommodityBrand> brands = new HashMap<>();
+		for (CommodityBrand brand : brandDao.findAll()) {
 			brands.put(brand.getId(), brand);
 		}
 		for (Commodity good : commodities) {
@@ -151,8 +175,8 @@ public class RepositoryService {
         if (commodities == null) {
             return commodities;
         }
-        Map<Long, CommodityCategory> categories = new HashMap<>();
-        for (CommodityCategory category : CommodityCategoryDao.findAll()) {
+        Map<String, CommodityCategory> categories = new HashMap<>();
+        for (CommodityCategory category : categoryDao.findAll()) {
             categories.put(category.getId(), category);
         }
         for (Commodity commodity : commodities) {
@@ -169,7 +193,7 @@ public class RepositoryService {
 	 * @param id 商品ID
 	 * @return
 	 */
-	public Commodity getCommodity(long id) {
+	public Commodity getCommodity(String id) {
 		return commodityDao.get(id);
 	}
 	
@@ -177,23 +201,17 @@ public class RepositoryService {
 	 * 添加商品信息
 	 * @return
 	 */
-	public long addCommodity(Commodity goods) {
-		if (goods.getBrand() != null && goods.getBrand().getId() == 0) {
-			goods.setBrand(null);
-		}
-		return commodityDao.insert(goods);
-	}
-	
-	/**
-	 * 修改商品信息
-	 * @param commodity
-	 * @return
-	 */
-	public long updateCommodity(Commodity commodity) {
+	public ResponseData<Commodity> saveCommodity(Commodity commodity) {
 		if (commodity == null) {
-			return 0;
+			return new ResponseData<>("信息不能为空");
 		}
-		return commodityDao.update(commodity);
+		int rows = StringUtils.isNullOrEmpty(commodity.getId())
+				? commodityDao.insert(commodity)
+				: commodityDao.update(commodity);
+		if (rows == 0) {
+			return new ResponseData<>("数据库操作失败");
+		}
+		return new ResponseData<>(commodity);
 	}
 	
 	/**
@@ -202,7 +220,7 @@ public class RepositoryService {
 	 * @param count 入库数量
 	 * @return 返回true表示入库成功，返回false表示入库失败
 	 */
-	public boolean storeCommodity(long commodityId, int count) {
+	public boolean storeCommodity(String commodityId, int count) {
 		if (count == 0) {
 			return false;
 		}

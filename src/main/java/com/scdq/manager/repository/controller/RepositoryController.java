@@ -2,6 +2,7 @@ package com.scdq.manager.repository.controller;
 
 import java.util.List;
 
+import com.scdq.manager.common.ResponseData;
 import com.scdq.manager.repository.model.CommodityCategory;
 import com.scdq.manager.repository.model.Commodity;
 import com.scdq.manager.repository.service.RepositoryService;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.scdq.manager.repository.model.CommodityBrand;
 
 @RestController
-@RequestMapping("/goods")
+@RequestMapping("/repository")
 public class RepositoryController {
 	@Autowired
 	private RepositoryService repositoryService;
@@ -22,19 +23,14 @@ public class RepositoryController {
 		return repositoryService.getCategories();
 	}
 	
-	@RequestMapping("/addCategory")
-	public long addCategory(CommodityCategory category) {
-		return repositoryService.addCategory(category);
+	@RequestMapping("/saveCategory")
+	public ResponseData<CommodityCategory> saveCategory(CommodityCategory category) {
+		return repositoryService.saveCategory(category);
 	}
-	
-	@RequestMapping("/updateCategory")
-	public boolean updateCategory(CommodityCategory category) {
-		return repositoryService.updateCategory(category);
-	}
-	
+
 	@RequestMapping("/deleteCategory")
-	public boolean deleteCategory(long categoryId) {
-		return repositoryService.deleteCategory(categoryId);
+	public ResponseData<CommodityCategory> deleteCategory(String id) {
+		return repositoryService.deleteCategory(id);
 	}
 	
 	@RequestMapping("/getBrands")
@@ -42,43 +38,33 @@ public class RepositoryController {
 		return repositoryService.getBrands();
 	}
 	
-	@RequestMapping("/addBrand")
-	public long addBrand(CommodityBrand brand) {
-		return repositoryService.addBrand(brand);
+	@RequestMapping("/saveBrand")
+	public ResponseData<CommodityBrand> saveBrand(CommodityBrand brand) {
+		return repositoryService.saveBrand(brand);
 	}
-	
-	@RequestMapping("/updateBrand")
-	public boolean updateBrand(CommodityBrand brand) {
-		return repositoryService.updateBrand(brand);
-	}
-	
+
 	@RequestMapping("/deleteBrand")
-	public boolean deleteBrand(long brandId) {
-		return repositoryService.deleteBrand(brandId);
+	public ResponseData<CommodityBrand> deleteBrand(String id) {
+		return repositoryService.deleteBrand(id);
 	}
 	
 	@RequestMapping("/getCommoditiesByBrand")
-	public List<Commodity> getCommoditiesByBrand(int brandId) {
+	public List<Commodity> getCommoditiesByBrand(String brandId) {
 		return repositoryService.getCommoditiesByBrand(brandId);
 	}
 	
 	@RequestMapping("/getCommoditiesByCategory")
-	public List<Commodity> getGoodsByCategory(int categoryId) {
+	public List<Commodity> getGoodsByCategory(String categoryId) {
 		return repositoryService.getCommoditiesByCategory(categoryId);
 	}
 	
-	@RequestMapping("/addCommodity")
-	public long addCommodity(Commodity commodity) {
-		return repositoryService.addCommodity(commodity);
+	@RequestMapping("/saveCommodity")
+	public ResponseData<Commodity> saveCommodity(Commodity commodity) {
+		return repositoryService.saveCommodity(commodity);
 	}
-	
-	@RequestMapping("/updateCommodity")
-	public long updateCommodity(Commodity commodity) {
-		return repositoryService.updateCommodity(commodity);
-	}
-	
+
 	@RequestMapping("/storeCommodity")
-	public boolean storeCommodity(long commodityId, int count) {
+	public boolean storeCommodity(String commodityId, int count) {
 		return repositoryService.storeCommodity(commodityId, count);
 	}
 }

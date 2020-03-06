@@ -523,6 +523,9 @@
             return result;
         };
 
+        /**
+         * 清除页面数据
+         */
         this.clear = function() {
             _$each(this.fields, function(i, e) {
                 if (e.type == "action") {
@@ -551,13 +554,46 @@
                     return false;
                 }
             });
-            return !failed;
+            if (failed) {
+                return false;
+            }
+            return data;
+        };
+
+        /**
+         * 提交页面数据
+         */
+        this.submit = function() {
+            if (!this.submitUrl) {
+                return;
+            }
+            var data = this.validate();
+            if (data === false) {
+                return;
+            }
+            $.ajax({
+                "type": "POST",
+                "url": _this.submitUrl,
+                "data": data,
+                "success": function(result) {
+                    if (result == 1) {
+                        alert("操作失败: " + result.message);
+                        return;
+                    }
+                    if (_this.submitSuccess) {
+                        _this.submitSuccess(result.data);
+                    }
+                }
+            });
         };
 
         this.attrs({
             "fields": [],
             "useDefaultPrompt": true,
             "validateFailed": function() {
+
+            },
+            "submitSuccess": function(data) {
 
             }
         }, true);
@@ -602,6 +638,7 @@
             "valueField": "value",
             "textField": "text",
             "prompt": "请选择",
+            "submitUrl": "",
             "onSelect": function(model) {
 
             }
@@ -648,6 +685,14 @@
          */
         this.hide = function() {
             $(this.container).hide();
+        };
+
+        /**
+         * 设置窗口标题
+         */
+        this.setTitle = function(title) {
+            this.title = title;
+            $(this.container).find(".title").text(this.title);
         };
 
         this.initWindow();

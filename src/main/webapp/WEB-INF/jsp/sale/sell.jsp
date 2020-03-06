@@ -43,7 +43,7 @@
             });
             $("#goods-tab").myTab({
                 "tabBar": "#goods-tab",
-                "url": "goods/getCommoditiesByCategory",
+                "url": "repository/getCommoditiesByCategory",
                 "autoLoad": false,
                 "tabContent": "",
                 "tabIndex": -1,
@@ -55,7 +55,7 @@
                     addGoodsCount(goods, 1);
                 }
             });
-            $("#categories-tab").myTab("request", "goods/getCategories");
+            $("#categories-tab").myTab("request", "repository/getCategories");
             $("#goods-form").myForm({
                 "fields": [{
                     "name": "id",

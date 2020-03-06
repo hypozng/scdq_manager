@@ -40,14 +40,6 @@ public class Commodity extends BasicModel {
 	
 	// 备注
 	private String remark;
-
-	public Commodity() {
-		
-	}
-	
-	public Commodity(long id) {
-		super(id);
-	}
 	
 	public CommodityCategory getCategory() {
 		return category;
