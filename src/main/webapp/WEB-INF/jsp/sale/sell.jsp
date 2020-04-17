@@ -177,6 +177,24 @@
                 "height": 400
             });
 
+            $("#customer-window").myWindow({
+                "title": "客户信息",
+                "height": 400
+            });
+
+            $("#customer-grid").myGrid({
+                "fields": [{
+                    "name": "name",
+                    "title": "姓名"
+                }, {
+                    "name": "phone",
+                    "title": "电话"
+                }, {
+                    "name": "address",
+                    "title": "住址"
+                }]
+            });
+
             $("#create-order-button").click(function() {
                 var order = $("#order-form").myForm("data") || {};
                 console.log(order);
@@ -271,6 +289,13 @@
         }
 
         /**
+         * 显示客户窗口
+         */
+        function showCustomerWindow() {
+            $("#customer-window").myWindow("show");
+        }
+
+        /**
          * 提交订单
          */
         function submitOrder() {
@@ -305,6 +330,7 @@
 <div id="goods-tab"></div>
 <div id="order-box">
     <div id="order-grid"></div>
+    <a href="javascript:showCustomerWindow()">客户信息</a>
     <button id="create-order-button">创建订单</button>
 </div>
 <div id="goods-window">
@@ -312,6 +338,16 @@
 </div>
 <div id="order-window">
     <div id="order-form"></div>
+</div>
+<div id="customer-window">
+    <div class="form-field">
+        <input type="text" style="width:240px"/>
+        <button>搜索</button>
+    </div>
+    <div id="customer-grid"></div>
+    <div style="text-align:center">
+        <button style="width:100px">添加客户信息</button>
+    </div>
 </div>
 </body>
 </html>
